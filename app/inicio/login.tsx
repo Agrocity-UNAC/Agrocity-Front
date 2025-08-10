@@ -1,49 +1,77 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useLoginForm } from "../../hooks/useLoginForm";
 
 const Login = () => {
-  const [usuario, setUsuario] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
-    console.log("Login:", { usuario, password });
-    router.replace("/home");
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleSubmit,
+    isLoading,
+    error,
+  } = useLoginForm();
 
   const handleGoToRegister = () => {
     router.replace("/inicio/register");
   };
 
+  // Mostrar error si existe
+  React.useEffect(() => {
+    if (error) {
+      Alert.alert("Error de inicio de sesión", error);
+    }
+  }, [error]);
+
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.card}>
           <View style={styles.logoContainer}>
-              <Image source={require("../../assets/images/LogoAgrocity.png")} style={styles.logo} />
+            <Image
+              source={require("../../assets/images/LogoAgrocity.png")}
+              style={styles.logo}
+            />
           </View>
 
           <Text style={styles.welcomeText}>¡Bienvenido!</Text>
           <Text style={styles.subtitle}>Inicia sesión con Agrocity</Text>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Usuario</Text>
+            <Text style={styles.inputLabel}>Email</Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="person" style={styles.inputIcon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="Ingresa tu usuario" 
+              <Ionicons name="mail" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Ingresa tu email"
                 placeholderTextColor="#999"
-                value={usuario}
-                onChangeText={setUsuario}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
           </View>
@@ -52,19 +80,30 @@ const Login = () => {
             <Text style={styles.inputLabel}>Contraseña</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="lock-closed" style={styles.inputIcon} />
-              <TextInput 
-                style={styles.input} 
-                placeholder="Ingresa tu contraseña" 
+              <TextInput
+                style={styles.input}
+                placeholder="Ingresa tu contraseña"
                 placeholderTextColor="#999"
-                secureTextEntry 
+                secureTextEntry
                 value={password}
                 onChangeText={setPassword}
               />
             </View>
           </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+          <TouchableOpacity
+            style={[
+              styles.loginButton,
+              isLoading && styles.loginButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.registerContainer}>
@@ -113,13 +152,9 @@ const styles = StyleSheet.create({
     width: 150,
     height: 130,
   },
-  leafIcon: {
-    fontSize: 40,
-    color: "#fff",
-  },
   welcomeText: {
     fontSize: 25,
-    fontWeight: "semibold",
+    fontWeight: "600",
     color: "#333",
     textAlign: "center",
     marginBottom: 3,
@@ -138,7 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#4CAF50",
     marginBottom: 8,
-    
   },
   inputWrapper: {
     flexDirection: "row",
@@ -172,6 +206,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  loginButtonDisabled: {
+    backgroundColor: "#A5D6A7",
   },
   loginButtonText: {
     color: "#fff",
