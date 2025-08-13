@@ -4,7 +4,7 @@ import React from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -27,11 +27,28 @@ const Login = () => {
     error,
   } = useLoginForm();
 
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   const handleGoToRegister = () => {
-    router.replace("/inicio/register");
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      router.replace("/inicio/register");
+    });
   };
 
-  // Mostrar error si existe
   React.useEffect(() => {
     if (error) {
       Alert.alert("Error de inicio de sesión", error);
@@ -39,89 +56,167 @@ const Login = () => {
   }, [error]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+    <View style={styles.container}>
+      <View style={styles.gradientTop} />
+      <View style={styles.gradientBottom} />
+      
+      <View style={styles.cloud1} />
+      <View style={styles.cloud2} />
+      <View style={styles.cloud3} />
+      
+      <View style={styles.sun} />
+
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={styles.card}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("../../assets/images/LogoAgrocity.png")}
-              style={styles.logo}
-            />
-          </View>
-
-          <Text style={styles.welcomeText}>¡Bienvenido!</Text>
-          <Text style={styles.subtitle}>Inicia sesión con Agrocity</Text>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="mail" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Ingresa tu email"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Animated.View style={[styles.contentContainer, { opacity: fadeAnim }]}>
+            <View style={styles.logoContainer}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="leaf" style={styles.leafIcon} />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Contraseña</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons name="lock-closed" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Ingresa tu contraseña"
-                placeholderTextColor="#999"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
+            <Text style={styles.appName}>Agrocity</Text>
+            <Text style={styles.tagline}>Cuidando tus plantas</Text>
+
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <View style={styles.labelContainer}>
+                  <Ionicons name="person" style={styles.labelIcon} />
+                  <Text style={styles.inputLabel}>Nombre de Granjero</Text>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Introduce tu nombre"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <View style={styles.labelContainer}>
+                  <Ionicons name="lock-closed" style={styles.labelIcon} />
+                  <Text style={styles.inputLabel}>Contraseña</Text>
+                </View>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Introduce tu contraseña"
+                    placeholderTextColor="#999"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity 
+                    style={styles.eyeIcon}
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <Ionicons name={showPassword ? "eye-off" : "eye"} style={styles.eyeIconStyle} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.loginButton,
+                  isLoading && styles.loginButtonDisabled,
+                ]}
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="heart" style={styles.buttonIcon} />
+                    <Text style={styles.loginButtonText}>¡Comenzar a sembrar!</Text>
+                    <Ionicons name="heart" style={styles.buttonIcon} />
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <View style={styles.registerContainer}>
+                <Text style={styles.registerText}>¿Nuevo granjero? </Text>
+                <TouchableOpacity onPress={handleGoToRegister}>
+                  <Text style={styles.registerLink}>¡Únete primero!</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-
-          <TouchableOpacity
-            style={[
-              styles.loginButton,
-              isLoading && styles.loginButtonDisabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>¿No tienes cuenta? </Text>
-            <TouchableOpacity onPress={handleGoToRegister}>
-              <Text style={styles.registerLink}>Registrarte aquí</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eaffea",
+    position: "relative",
+  },
+  gradientTop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "70%",
+    backgroundColor: "#87CEEB", 
+  },
+  gradientBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "30%",
+    backgroundColor: "#90EE90", 
+  },
+  cloud1: {
+    position: "absolute",
+    top: 80,
+    left: 30,
+    width: 60,
+    height: 30,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderRadius: 30,
+  },
+  cloud2: {
+    position: "absolute",
+    top: 120,
+    right: 40,
+    width: 80,
+    height: 35,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 40,
+  },
+  cloud3: {
+    position: "absolute",
+    top: 60,
+    right: 100,
+    width: 50,
+    height: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    borderRadius: 25,
+  },
+  sun: {
+    position: "absolute",
+    top: 50,
+    right: 50,
+    width: 40,
+    height: 40,
+    backgroundColor: "#FFD700",
+    borderRadius: 20,
+  },
+  keyboardContainer: {
+    flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -130,103 +225,154 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingVertical: 40,
   },
-  card: {
+  contentContainer: {
     width: "100%",
     maxWidth: 400,
-    padding: 20,
-    backgroundColor: "#fff",
+    padding: 30,
+    backgroundColor: "#F0F8F0", 
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 10,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 25,
+  },
+  iconContainer: {
+    width: 90,
+    height: 90,
+    backgroundColor: "#4CAF50",
     borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  logoContainer: {
-    alignItems: "center",
+  leafIcon: {
+    fontSize: 45,
+    color: "#fff",
   },
-  logo: {
-    width: 150,
-    height: 130,
-  },
-  welcomeText: {
-    fontSize: 25,
-    fontWeight: "600",
-    color: "#333",
+  appName: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#2E7D32",
     textAlign: "center",
-    marginBottom: 3,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: "#4CAF50",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#4CAF50",
     marginBottom: 8,
   },
-  inputWrapper: {
+  tagline: {
+    fontSize: 18,
+    color: "#4CAF50",
+    textAlign: "center",
+    marginBottom: 35,
+  },
+  formContainer: {
+    width: "100%",
+  },
+  inputContainer: {
+    marginBottom: 25,
+  },
+  labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 0.5,
-    borderColor: "#4ADE80",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    paddingHorizontal: 15,
-    height: 45,
+    marginBottom: 10,
   },
-  inputIcon: {
-    fontSize: 18,
-    marginRight: 10,
-    color: "#48A86B",
+  labelIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    color: "#999",
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2E7D32",
   },
   input: {
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#333",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+  },
+  passwordInput: {
     flex: 1,
     fontSize: 16,
     color: "#333",
   },
+  eyeIcon: {
+    padding: 5,
+  },
+  eyeIconStyle: {
+    fontSize: 20,
+    color: "#4CAF50",
+  },
   loginButton: {
     backgroundColor: "#4CAF50",
-    borderRadius: 10,
-    paddingVertical: 15,
+    borderRadius: 15,
+    paddingVertical: 18,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 8,
+    elevation: 8,
   },
   loginButtonDisabled: {
     backgroundColor: "#A5D6A7",
   },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonIcon: {
+    fontSize: 18,
+    color: "#fff",
+    marginHorizontal: 8,
+  },
   loginButtonText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
   },
   registerContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 25,
   },
   registerText: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 15,
+    color: "#2E7D32",
   },
   registerLink: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#4CAF50",
     textDecorationLine: "underline",
     fontWeight: "600",
