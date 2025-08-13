@@ -31,7 +31,6 @@ export default function RootLayout() {
     }
   }, []);
 
-  // Mostrar pantalla de carga mientras se inicializa la autenticación
   if (isLoadingAuth) {
     return (
       <View style={styles.container}>
