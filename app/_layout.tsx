@@ -15,7 +15,6 @@ export default function RootLayout() {
       hasInitialized.current = true;
       initializeAuth();
       
-      // Animación de entrada
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -36,20 +35,16 @@ export default function RootLayout() {
   if (isLoadingAuth) {
     return (
       <View style={styles.container}>
-        {/* Fondo con gradiente */}
         <View style={styles.gradientTop} />
         <View style={styles.gradientBottom} />
         
-        {/* Nubes decorativas */}
         <View style={styles.cloud1} />
         <View style={styles.cloud2} />
         <View style={styles.cloud3} />
         <View style={styles.cloud4} />
         
-        {/* Sol */}
         <View style={styles.sun} />
 
-        {/* Contenido central */}
         <View style={styles.contentContainer}>
           <Animated.View 
             style={[
@@ -96,13 +91,18 @@ export default function RootLayout() {
     );
   }
 
-  // Una vez que la autenticación se ha inicializado, mostrar el Stack
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="inicio/login" />
-      <Stack.Screen name="inicio/register" />
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="home" options={{ headerShown: false }} />
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="inicio/login" options={{ headerShown: false }} />
+        <Stack.Screen name="inicio/register" options={{ headerShown: false }} />
+      </Stack.Protected>
     </Stack>
   );
 }
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: "70%",
-    backgroundColor: "#87CEEB", // Azul cielo
+    backgroundColor: "#87CEEB", 
   },
   gradientBottom: {
     position: "absolute",
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: "30%",
-    backgroundColor: "#90EE90", // Verde claro
+    backgroundColor: "#90EE90", 
   },
   cloud1: {
     position: "absolute",
