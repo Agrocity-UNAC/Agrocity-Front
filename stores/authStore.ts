@@ -105,7 +105,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       // Crear usuario
-      await api.post("/users/create", {
+      await api.post("/users", {
         email,
         name,
         password,

@@ -1,7 +1,18 @@
 export interface User {
-  userId: string;
-  avatar: string | null;
-  email: string;
+  level: number;
+  experience: number;
+  rank: string;
+  unlockedBadges: any[];
+  completedMissions: any[];
+  _id: string;
   name: string;
-  role: "USER" | "CONTRIBUTOR";
+  email: string;
+  isAdmin: boolean;
+  __v: number;
+  currentStreak: number;
+  lastActivityDate: Date;
+  longestStreak: number;
+  updatedAt: Date;
+  currentPoints: number;
+  totalPoints: number;
 }

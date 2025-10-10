@@ -1,15 +1,18 @@
+import { RankBadge } from "@/components/atoms/RankBadge";
+import { LevelProgressCard } from "@/components/molecules/LevelProgressCard";
+import { UserStatsGrid } from "@/components/molecules/UserStatsGrid";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "../../stores/authStore";
 
 export default function Profile() {
@@ -45,108 +48,137 @@ export default function Profile() {
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          {user.avatar ? (
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
-          ) : (
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <View style={styles.avatarContainer}>
             <View style={styles.avatarPlaceholder}>
               <Ionicons name="person" size={60} color="#fff" />
             </View>
-          )}
-        </View>
-        <Text style={styles.userName}>{user.name || "Usuario"}</Text>
-        <Text style={styles.userEmail}>{user.email}</Text>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Información Personal</Text>
-
-          <View style={styles.infoCard}>
-            <View style={styles.infoItem}>
-              <View style={styles.infoIcon}>
-                <Ionicons name="person-outline" size={20} color="#4CAF50" />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Nombre completo</Text>
-                <Text style={styles.infoValue}>
-                  {user.name || "No especificado"}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoItem}>
-              <View style={styles.infoIcon}>
-                <Ionicons name="mail-outline" size={20} color="#4CAF50" />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Correo electrónico</Text>
-                <Text style={styles.infoValue}>{user.email}</Text>
-              </View>
-            </View>
+          </View>
+          <Text style={styles.userName}>{user.name || "Usuario"}</Text>
+          <Text style={styles.userEmail}>{user.email}</Text>
+          <View style={styles.rankContainer}>
+            <RankBadge rank={user.rank} size="large" />
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Configuración</Text>
+        <View style={styles.content}>
+          {/* Level Progress */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Progreso de Nivel</Text>
+            <LevelProgressCard
+              level={user.level}
+              experience={user.experience}
+              rank={user.rank}
+            />
+          </View>
 
-          <View style={styles.actionCard}>
-            <TouchableOpacity style={styles.actionItem}>
-              <View style={styles.actionIcon}>
-                <Ionicons name="settings-outline" size={20} color="#666" />
+          {/* Stats Grid */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Estadísticas</Text>
+            <UserStatsGrid
+              level={user.level}
+              currentPoints={user.currentPoints}
+              currentStreak={user.currentStreak}
+              longestStreak={user.longestStreak}
+            />
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Información Personal</Text>
+
+            <View style={styles.infoCard}>
+              <View style={styles.infoItem}>
+                <View style={styles.infoIcon}>
+                  <Ionicons name="person-outline" size={20} color="#4CAF50" />
+                </View>
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoLabel}>Nombre completo</Text>
+                  <Text style={styles.infoValue}>
+                    {user.name || "No especificado"}
+                  </Text>
+                </View>
               </View>
-              <Text style={styles.actionText}>Configuración de cuenta</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </TouchableOpacity>
 
-            <View style={styles.divider} />
+              <View style={styles.divider} />
 
-            <TouchableOpacity style={styles.actionItem}>
-              <View style={styles.actionIcon}>
-                <Ionicons name="notifications-outline" size={20} color="#666" />
+              <View style={styles.infoItem}>
+                <View style={styles.infoIcon}>
+                  <Ionicons name="mail-outline" size={20} color="#4CAF50" />
+                </View>
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoLabel}>Correo electrónico</Text>
+                  <Text style={styles.infoValue}>{user.email}</Text>
+                </View>
               </View>
-              <Text style={styles.actionText}>Notificaciones</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </TouchableOpacity>
+            </View>
+          </View>
 
-            <View style={styles.divider} />
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Configuración</Text>
 
-            <TouchableOpacity style={styles.actionItem}>
-              <View style={styles.actionIcon}>
-                <Ionicons name="shield-outline" size={20} color="#666" />
-              </View>
-              <Text style={styles.actionText}>Privacidad y seguridad</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            <View style={styles.actionCard}>
+              <TouchableOpacity style={styles.actionItem}>
+                <View style={styles.actionIcon}>
+                  <Ionicons name="settings-outline" size={20} color="#666" />
+                </View>
+                <Text style={styles.actionText}>Configuración de cuenta</Text>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <TouchableOpacity style={styles.actionItem}>
+                <View style={styles.actionIcon}>
+                  <Ionicons
+                    name="notifications-outline"
+                    size={20}
+                    color="#666"
+                  />
+                </View>
+                <Text style={styles.actionText}>Notificaciones</Text>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <TouchableOpacity style={styles.actionItem}>
+                <View style={styles.actionIcon}>
+                  <Ionicons name="shield-outline" size={20} color="#666" />
+                </View>
+                <Text style={styles.actionText}>Privacidad y seguridad</Text>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <>
+                  <Ionicons name="log-out-outline" size={20} color="#fff" />
+                  <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={handleLogout}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <>
-                <Ionicons name="log-out-outline" size={20} color="#fff" />
-                <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#4CAF50",
+  },
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
@@ -164,10 +196,13 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#4CAF50",
-    paddingTop: 60,
+    paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
     alignItems: "center",
+  },
+  rankContainer: {
+    marginTop: 12,
   },
   avatarContainer: {
     marginBottom: 15,

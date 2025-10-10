@@ -1,43 +1,86 @@
-export type PlantType =
-  | "VEGETABLE"
-  | "HERB"
-  | "FRUIT"
-  | "FLOWER"
-  | "SUCCULENT"
-  | "TREE"
-  | "SHRUB"
-  | "VINE"
-  | "GRAIN"
-  | "LEGUME";
-
-export type Lifespan = "ANNUAL" | "BIENNIAL" | "PERENNIAL";
-
-export type SunlightNeed =
-  | "FULL_SUN"
-  | "PARTIAL_SUN"
-  | "PARTIAL_SHADE"
-  | "FULL_SHADE";
-
-export type WaterNeed = "LOW" | "MODERATE" | "HIGH";
-
-export type Difficulty = "EASY" | "MODERATE" | "HARD";
-
-export interface Plant {
-  id: string;
+export interface BasePlant {
+  _id: string;
   image: string;
   commonName: string;
   scientificName: string;
-  variety: string;
-  plantType: PlantType;
   difficulty: Difficulty;
+  plantType: PlantType;
+}
+
+export interface Plant extends BasePlant {
+  isActive: boolean;
+  variety: string;
+  family: string;
+  maxHeight: number;
+  plantDistance: number;
+  rowDistance: number;
+  depth: number;
   lifespan: Lifespan;
   sunlight: SunlightNeed;
   waterNeed: WaterNeed;
-  harvestable: boolean;
-  daysToMaturity: number;
+  soilType: string[];
+  phRange: string;
+  minTemp: number;
+  maxTemp: number;
   plantingMonths: string[];
   harvestMonths: string[];
+  daysToGerminate: number;
+  daysToMaturity: number;
+  wateringFrequency: number;
+  wateringAmount: number;
+  fertilizingFrequency: number;
+  prunningRequired: boolean;
+  companionPlants: string[];
+  incompatiblePlants: string[];
+  harvestable: boolean;
+  harvestSize: string;
+  storageMethod: string;
+  shelfLife: number;
+  edibleParts: string[];
+  nutritionalInfo: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  growingTips: string[];
+  commonPests: string[];
+  commonDiseases: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
+export enum PlantType {
+  VEGETABLE = "VEGETABLE",
+  HERB = "HERB",
+  FRUIT = "FRUIT",
+  FLOWER = "FLOWER",
+  SUCCULENT = "SUCCULENT",
+  TREE = "TREE",
+  SHRUB = "SHRUB",
+  VINE = "VINE",
+  GRAIN = "GRAIN",
+  LEGUME = "LEGUME",
+}
+
+export enum Lifespan {
+  ANNUAL = "ANNUAL",
+  BIENNIAL = "BIENNIAL",
+  PERENNIAL = "PERENNIAL",
+}
+
+export enum SunlightNeed {
+  FULL_SUN = "FULL_SUN",
+  PARTIAL_SUN = "PARTIAL_SUN",
+  PARTIAL_SHADE = "PARTIAL_SHADE",
+  FULL_SHADE = "FULL_SHADE",
+}
+
+export enum WaterNeed {
+  LOW = "LOW",
+  MODERATE = "MODERATE",
+  HIGH = "HIGH",
+}
+
+export enum Difficulty {
+  EASY = "EASY",
+  MODERATE = "MODERATE",
+  HARD = "HARD",
 }
