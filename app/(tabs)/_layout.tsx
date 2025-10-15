@@ -1,4 +1,4 @@
-import { FontAwesome5, Octicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons, Octicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 
@@ -8,6 +8,7 @@ const CoreLayout = () => {
       screenOptions={{
         tabBarActiveTintColor: "#4CAF50",
         tabBarInactiveTintColor: "#999",
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen
@@ -44,6 +45,22 @@ const CoreLayout = () => {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="AI"
+        options={{
+          headerShown: false,
+          title: "IA",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "sparkles" : "sparkles-outline"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="profile"
         options={{

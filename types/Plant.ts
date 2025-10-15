@@ -81,6 +81,6 @@ export enum WaterNeed {
 
 export enum Difficulty {
   EASY = "EASY",
-  MODERATE = "MODERATE",
+  MEDIUM = "MEDIUM",
   HARD = "HARD",
 }

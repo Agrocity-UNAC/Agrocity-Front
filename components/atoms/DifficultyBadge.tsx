@@ -11,7 +11,7 @@ const DifficultyBadge: React.FC<DifficultyBadgeProps> = ({ difficulty }) => {
     switch (difficulty) {
       case Difficulty.EASY:
         return "#4CAF50"; // Green
-      case Difficulty.MODERATE:
+      case Difficulty.MEDIUM:
         return "#FFC107"; // Amber
       case Difficulty.HARD:
         return "#F44336"; // Red
@@ -24,7 +24,7 @@ const DifficultyBadge: React.FC<DifficultyBadgeProps> = ({ difficulty }) => {
     switch (difficulty) {
       case Difficulty.EASY:
         return "Fácil";
-      case Difficulty.MODERATE:
+      case Difficulty.MEDIUM:
         return "Moderada";
       case Difficulty.HARD:
         return "Difícil";

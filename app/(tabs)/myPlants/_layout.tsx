@@ -13,6 +13,10 @@ const MyPlantsLayout = () => {
         name="[userPlantId]"
         options={{ headerShown: false, title: "Detalle de Planta" }}
       />
+      <Stack.Screen
+        name="missions"
+        options={{ headerShown: false, title: "Misiones" }}
+      />
     </Stack>
   );
 };
