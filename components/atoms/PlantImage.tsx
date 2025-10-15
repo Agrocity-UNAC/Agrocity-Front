@@ -3,11 +3,13 @@ import { Image, StyleSheet, View } from "react-native";
 
 interface PlantImageProps {
   imageUrl: string;
+  userImages?: string[];
   size?: "small" | "medium" | "large";
 }
 
 const PlantImage: React.FC<PlantImageProps> = ({
   imageUrl,
+  userImages,
   size = "medium",
 }) => {
   const [hasError, setHasError] = useState(false);
@@ -21,10 +23,26 @@ const PlantImage: React.FC<PlantImageProps> = ({
   // Imagen por defecto que se usará en caso de error
   const defaultImage = require("@/assets/images/default-plant-image.png");
 
+  // Función para obtener la imagen correcta
+  const getImageSource = () => {
+    if (hasError) {
+      return defaultImage;
+    }
+
+    // Si hay imágenes del usuario, usar la última
+    if (userImages && userImages.length > 0) {
+      const lastUserImage = userImages[userImages.length - 1];
+      return { uri: lastUserImage };
+    }
+
+    // Si no hay imágenes del usuario, usar la imagen por defecto de la planta
+    return { uri: imageUrl };
+  };
+
   return (
     <View style={[styles.container, styles[size]]}>
       <Image
-        source={hasError ? defaultImage : { uri: imageUrl }}
+        source={getImageSource()}
         style={[styles.image, sizeStyles[size]]}
         resizeMode="cover"
         onError={() => setHasError(true)}

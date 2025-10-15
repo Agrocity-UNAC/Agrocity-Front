@@ -52,6 +52,8 @@ export const TamagotchiPlantView: React.FC<TamagotchiPlantViewProps> = ({
         emotionalState={userPlant.emotionalState}
         health={userPlant.health}
         daysAlive={userPlant.daysAlive}
+        plantImageUrl={userPlant.plant.image}
+        userImages={userPlant.images}
       />
 
       {/* Stats Row */}

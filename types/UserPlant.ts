@@ -13,6 +13,7 @@ export interface UserPlant {
   hasFlowered: boolean;
   achievements: string[];
   perfectCareDays: number;
+  images?: string[];
   createdAt: Date;
   updatedAt: Date;
   __v: number;

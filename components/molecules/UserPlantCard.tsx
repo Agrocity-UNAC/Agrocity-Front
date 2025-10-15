@@ -30,7 +30,11 @@ const UserPlantCard: React.FC<UserPlantCardProps> = ({
       onPress={onPress}
     >
       <View style={styles.imageSection}>
-        <PlantImage imageUrl={plant.image} size="medium" />
+        <PlantImage
+          imageUrl={plant.image}
+          userImages={userPlant.images}
+          size="medium"
+        />
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View

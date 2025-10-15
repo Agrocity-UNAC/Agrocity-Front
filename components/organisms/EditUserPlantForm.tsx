@@ -1,39 +1,28 @@
 import { useImagePicker } from "@/hooks/useImagePicker";
-import { BasePlant } from "@/types/Plant";
+import { UserPlant } from "@/types/UserPlant";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Button from "../atoms/Button";
 import ImagePickerButton from "../atoms/ImagePickerButton";
 import Input from "../atoms/Input";
 import ImageGalleryPreview from "../molecules/ImageGalleryPreview";
-import PlantSelectorCard from "../molecules/PlantSelectorCard";
 
-interface AddUserPlantFormProps {
-  plants: BasePlant[];
-  isLoadingPlants: boolean;
-  isCreating: boolean;
-  onSubmit: (plantId: string, nickname: string, imageUris: string[]) => void;
+interface EditUserPlantFormProps {
+  userPlant: UserPlant;
+  isUpdating: boolean;
+  onSubmit: (nickname: string, imageUris: string[]) => void;
   onCancel?: () => void;
 }
 
-const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
-  plants,
-  isLoadingPlants,
-  isCreating,
+const EditUserPlantForm: React.FC<EditUserPlantFormProps> = ({
+  userPlant,
+  isUpdating,
   onSubmit,
   onCancel,
 }) => {
-  const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState(userPlant.nickname);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [errors, setErrors] = useState<{
-    plant?: string;
     nickname?: string;
   }>({});
 
@@ -59,11 +48,7 @@ const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { plant?: string; nickname?: string } = {};
-
-    if (!selectedPlantId) {
-      newErrors.plant = "Debes seleccionar una planta";
-    }
+    const newErrors: { nickname?: string } = {};
 
     if (!nickname.trim()) {
       newErrors.nickname = "El apodo es requerido";
@@ -78,19 +63,10 @@ const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
   };
 
   const handleSubmit = () => {
-    if (validateForm() && selectedPlantId) {
-      onSubmit(selectedPlantId, nickname.trim(), selectedImages);
+    if (validateForm()) {
+      onSubmit(nickname.trim(), selectedImages);
     }
   };
-
-  if (isLoadingPlants) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.loadingText}>Cargando plantas...</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView
@@ -99,7 +75,7 @@ const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.formSection}>
-        <Text style={styles.sectionTitle}>1. Dale un apodo a tu planta</Text>
+        <Text style={styles.sectionTitle}>Editar información</Text>
         <Input
           label="Apodo"
           placeholder="Ej: Mi Tomate del Balcón"
@@ -114,51 +90,41 @@ const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
       </View>
 
       <View style={styles.formSection}>
-        <Text style={styles.sectionTitle}>2. Selecciona el tipo de planta</Text>
-        {errors.plant && <Text style={styles.errorText}>{errors.plant}</Text>}
-        {plants.length === 0 ? (
-          <Text style={styles.emptyText}>No hay plantas disponibles</Text>
-        ) : (
-          plants.map((plant) => (
-            <PlantSelectorCard
-              key={plant._id}
-              plant={plant}
-              isSelected={selectedPlantId === plant._id}
-              onPress={() => {
-                setSelectedPlantId(plant._id);
-                setErrors((prev) => ({ ...prev, plant: undefined }));
-              }}
-            />
-          ))
-        )}
-      </View>
-
-      <View style={styles.formSection}>
-        <Text style={styles.sectionTitle}>
-          3. Agrega fotos de tu planta (opcional)
-        </Text>
+        <Text style={styles.sectionTitle}>Agregar nuevas fotos (opcional)</Text>
         <Text style={styles.sectionDescription}>
-          Puedes agregar fotos desde tu cámara o galería para personalizar tu
-          planta
+          Las nuevas fotos se agregarán a tu colección existente
         </Text>
+        {userPlant.images && userPlant.images.length > 0 && (
+          <View style={styles.currentImagesInfo}>
+            <Text style={styles.currentImagesText}>
+              📷 Tienes {userPlant.images.length} foto
+              {userPlant.images.length !== 1 ? "s" : ""} actualmente
+            </Text>
+          </View>
+        )}
         <ImagePickerButton
           onPressCamera={handlePickImageFromCamera}
           onPressGallery={handlePickImagesFromGallery}
           isLoading={isPickingImage}
-          disabled={isCreating}
+          disabled={isUpdating}
         />
-        <ImageGalleryPreview
-          images={selectedImages}
-          onRemoveImage={handleRemoveImage}
-        />
+        {selectedImages.length > 0 && (
+          <>
+            <Text style={styles.newImagesLabel}>Nuevas fotos a agregar:</Text>
+            <ImageGalleryPreview
+              images={selectedImages}
+              onRemoveImage={handleRemoveImage}
+            />
+          </>
+        )}
       </View>
 
       <View style={styles.buttonContainer}>
         <Button
-          title="Agregar Planta"
+          title={isUpdating ? "Guardando..." : "Guardar Cambios"}
           onPress={handleSubmit}
-          loading={isCreating}
-          disabled={isCreating}
+          loading={isUpdating}
+          disabled={isUpdating}
           style={styles.submitButton}
         />
         {onCancel && (
@@ -166,7 +132,7 @@ const AddUserPlantForm: React.FC<AddUserPlantFormProps> = ({
             title="Cancelar"
             onPress={onCancel}
             variant="outline"
-            disabled={isCreating}
+            disabled={isUpdating}
           />
         )}
       </View>
@@ -181,17 +147,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 32,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: "#666",
   },
   formSection: {
     marginBottom: 24,
@@ -208,16 +163,23 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     lineHeight: 20,
   },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: "#666",
-  },
-  errorText: {
-    color: "#F44336",
-    fontSize: 14,
+  currentImagesInfo: {
+    backgroundColor: "#E8F5E9",
+    padding: 12,
+    borderRadius: 8,
     marginBottom: 12,
+  },
+  currentImagesText: {
+    fontSize: 14,
+    color: "#2E7D32",
+    fontWeight: "600",
+  },
+  newImagesLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 16,
+    marginBottom: 8,
   },
   buttonContainer: {
     gap: 12,
@@ -231,4 +193,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddUserPlantForm;
+export default EditUserPlantForm;

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { EmotionalStateIcon } from "../atoms/EmotionalStateIcon";
 import { HealthBar } from "../atoms/HealthBar";
+import PlantImage from "../atoms/PlantImage";
 
 interface PlantStatusCardProps {
   nickname: string;
@@ -9,6 +10,8 @@ interface PlantStatusCardProps {
   emotionalState: string;
   health: number;
   daysAlive: number;
+  plantImageUrl?: string;
+  userImages?: string[];
 }
 
 export const PlantStatusCard: React.FC<PlantStatusCardProps> = ({
@@ -17,6 +20,8 @@ export const PlantStatusCard: React.FC<PlantStatusCardProps> = ({
   emotionalState,
   health,
   daysAlive,
+  plantImageUrl,
+  userImages,
 }) => {
   const getEmotionalStateText = () => {
     const states: Record<string, string> = {
@@ -31,11 +36,22 @@ export const PlantStatusCard: React.FC<PlantStatusCardProps> = ({
     return states[emotionalState] || "Normal";
   };
 
+  // Mostrar imagen del usuario si está disponible, sino el ícono emocional
+  const hasUserImages = userImages && userImages.length > 0;
+
   return (
     <View style={styles.container}>
       {/* Avatar de la planta */}
       <View style={styles.avatarSection}>
-        <EmotionalStateIcon state={emotionalState} size={80} />
+        {hasUserImages && plantImageUrl ? (
+          <PlantImage
+            imageUrl={plantImageUrl}
+            userImages={userImages}
+            size="large"
+          />
+        ) : (
+          <EmotionalStateIcon state={emotionalState} size={80} />
+        )}
         <Text style={styles.emotionalText}>{getEmotionalStateText()}</Text>
       </View>
 

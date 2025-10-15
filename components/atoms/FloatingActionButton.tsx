@@ -1,21 +1,28 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 interface FloatingActionButtonProps {
   onPress: () => void;
   icon?: string;
+  iconName?: keyof typeof Ionicons.glyphMap;
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   onPress,
   icon = "+",
+  iconName,
 }) => {
   return (
     <Pressable
       style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
       onPress={onPress}
     >
-      <Text style={styles.icon}>{icon}</Text>
+      {iconName ? (
+        <Ionicons name={iconName} size={24} color="#333" />
+      ) : (
+        <Text style={styles.icon}>{icon}</Text>
+      )}
     </Pressable>
   );
 };

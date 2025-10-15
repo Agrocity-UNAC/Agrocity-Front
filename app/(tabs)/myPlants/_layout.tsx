@@ -14,6 +14,10 @@ const MyPlantsLayout = () => {
         options={{ headerShown: false, title: "Detalle de Planta" }}
       />
       <Stack.Screen
+        name="edit/[userPlantId]"
+        options={{ headerShown: false, title: "Editar Planta" }}
+      />
+      <Stack.Screen
         name="missions"
         options={{ headerShown: false, title: "Misiones" }}
       />

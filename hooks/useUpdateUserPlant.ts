@@ -1,25 +1,24 @@
 import { useUserPlantsStore } from "@/stores/plants/userPlantsStore";
 import { useState } from "react";
 
-interface CreateUserPlantData {
-  plantId: string;
-  nickname: string;
+interface UpdateUserPlantData {
+  nickname?: string;
   imageUris?: string[];
 }
 
-export const useCreateUserPlant = () => {
-  const { createUserPlant, isCreating } = useUserPlantsStore();
+export const useUpdateUserPlant = () => {
+  const { updateUserPlant, isUpdating } = useUserPlantsStore();
   const [error, setError] = useState<string | null>(null);
 
-  const addUserPlant = async (data: CreateUserPlantData) => {
+  const update = async (userPlantId: string, data: UpdateUserPlantData) => {
     try {
       setError(null);
-      const newPlant = await createUserPlant(data);
-      return { success: true, data: newPlant };
+      const updatedPlant = await updateUserPlant(userPlantId, data);
+      return { success: true, data: updatedPlant };
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ||
-        "No se pudo agregar la planta. Por favor intenta de nuevo.";
+        "No se pudo actualizar la planta. Por favor intenta de nuevo.";
       setError(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -28,8 +27,8 @@ export const useCreateUserPlant = () => {
   const clearError = () => setError(null);
 
   return {
-    addUserPlant,
-    isCreating,
+    updateUserPlant: update,
+    isUpdating,
     error,
     clearError,
   };

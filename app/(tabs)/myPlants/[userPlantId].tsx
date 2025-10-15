@@ -1,3 +1,4 @@
+import FloatingActionButton from "@/components/atoms/FloatingActionButton";
 import { TamagotchiPlantView } from "@/components/organisms/TamagotchiPlantView";
 import { useMqttPlantStore } from "@/stores/plants/MqttPlantStore";
 import { useUserPlantsStore } from "@/stores/plants/userPlantsStore";
@@ -48,6 +49,11 @@ const UserPlantDetail = () => {
         "No se pudo fertilizar la planta. Inténtalo de nuevo."
       );
     }
+  };
+
+  const handleEdit = () => {
+    if (!userPlantId) return;
+    router.push(`/myPlants/edit/${userPlantId}`);
   };
 
   useEffect(() => {
@@ -110,6 +116,7 @@ const UserPlantDetail = () => {
         isWatering={isWatering}
         isFertilizing={isFertilizing}
       />
+      <FloatingActionButton onPress={handleEdit} iconName="create-outline" />
     </SafeAreaView>
   );
 };

@@ -11,8 +11,12 @@ const AddUserPlantPage = () => {
   const { addUserPlant, isCreating } = useCreateUserPlant();
   const router = useRouter();
 
-  const handleSubmit = async (plantId: string, nickname: string) => {
-    const result = await addUserPlant({ plantId, nickname });
+  const handleSubmit = async (
+    plantId: string,
+    nickname: string,
+    imageUris: string[]
+  ) => {
+    const result = await addUserPlant({ plantId, nickname, imageUris });
 
     if (result.success) {
       // Navegar de vuelta a la lista de plantas

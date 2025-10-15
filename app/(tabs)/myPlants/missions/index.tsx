@@ -3,10 +3,11 @@ import FloatingActionButton from "@/components/atoms/FloatingActionButton";
 import ActiveMissionsList from "@/components/organisms/ActiveMissionsList";
 import { useAbandonMission } from "@/hooks/useAbandonMission";
 import { useActiveMissions } from "@/hooks/useActiveMissions";
+import { useActiveMissionsStore } from "@/stores/missions/activeMissionsStore";
 import { UserMission } from "@/types/UserMission";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,11 +15,21 @@ const MissionsIndex = () => {
   const router = useRouter();
   const { userMissions, isLoading, error, refreshActiveMissions } =
     useActiveMissions();
+  const fetchActiveMissions = useActiveMissionsStore(
+    (state) => state.fetchActiveMissions
+  );
   const { abandonMission, isLoading: isAbandoning } = useAbandonMission();
   const [selectedMission, setSelectedMission] = useState<UserMission | null>(
     null
   );
   const [abandonModalVisible, setAbandonModalVisible] = useState(false);
+
+  // Recargar misiones cuando la pantalla esté en foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchActiveMissions();
+    }, [fetchActiveMissions])
+  );
 
   const handleMissionPress = (userMission: UserMission) => {
     // Aquí puedes navegar a los detalles de la misión si quieres
